@@ -363,6 +363,8 @@ private:
   void recreateSwapChain() {
     vkDeviceWaitIdle(device);
 
+    cleanupSwapChain();
+
     createSwapChain();
     createImageView();
     createRenderPass();
