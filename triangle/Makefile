@@ -1,5 +1,16 @@
 CFLAGS = -std=c++17
-LDFLAGS = -lglfw -lvulkan -ldl -lpthread -lX11 -lXxf86vm -lXrandr -lXi 
+UNAME_S := $(shell uname -s)
+
+ifeq ($(UNAME_S),Linux)
+	# OSFLAG += -D LINUX
+	LDFLAGS = -lglfw -lvulkan -ldl -lpthread -lX11 -lXxf86vm -lXrandr -lXi
+endif
+ifeq ($(UNAME_S),Darwin)
+	# OSFLAG += -D OSX
+	LDFLAGS = -lglfw -lvulkan -ldl -lpthread -lX11
+endif
+
+
 
 all: *.cpp
 	g++ $(CFLAGS) -o a.out *.cpp $(LDFLAGS)
