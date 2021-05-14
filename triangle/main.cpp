@@ -115,9 +115,9 @@ struct Vertex {
 };
 
 struct UniformBufferObject {
-  glm::mat4 model;
-  glm::mat4 view;
-  glm::mat4 proj;
+  alignas(16) glm::mat4 model;
+  alignas(16) glm::mat4 view;
+  alignas(16) glm::mat4 proj;
 };
 
 const std::vector<Vertex> vertices = {
@@ -192,18 +192,28 @@ private:
   VkSampler textureSampler;
 
   void initWindow() {
-    glfwInit();
+    if (!glfwInit()) {
+      throw std::runtime_error("GlFW failed to initialize!\n");
+    }
 
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
     // glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
     window = glfwCreateWindow(WIDTH, HEIGHT, "Vulkan", nullptr, nullptr);
+
+    // A UserData field is a fairly common paradigm in C APIs that lets the user
+    // access contextual data from within callbacks without needing to make
+    // everything global
     glfwSetWindowUserPointer(window, this);
+
+    // Callback when the GLFW Window size changes
     glfwSetFramebufferSizeCallback(window, framebufferResizeCallback);
   }
 
   static void framebufferResizeCallback(GLFWwindow *window, int width,
                                         int height) {
+    // This pointer to the HelloTriangleApplication was been able to be
+    // retrieved here becasue it was first set in the initWindow() function.
     auto app = reinterpret_cast<HelloTriangleApplication *>(
         glfwGetWindowUserPointer(window));
 
@@ -381,6 +391,7 @@ private:
   }
 
   void createInstance() {
+    // To check what all validation layers are present
     if (enableValidationLayers && !checkValidationLayerSupport()) {
       throw std::runtime_error(
           "validation layers requested, but not available!");
@@ -398,16 +409,21 @@ private:
     createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
     createInfo.pApplicationInfo = &appInfo;
 
+    // getRequiredExtensions -> returns
+    // glfw extensions which are must + Any additional global extension that may
+    // be requested like Debug extensions
     auto extensions = getRequiredExtensions();
     createInfo.enabledExtensionCount = static_cast<uint32_t>(extensions.size());
     createInfo.ppEnabledExtensionNames = extensions.data();
 
     VkDebugUtilsMessengerCreateInfoEXT debugCreateInfo;
     if (enableValidationLayers) {
+      // Validation Layers -> Defined as global constant
       createInfo.enabledLayerCount =
           static_cast<uint32_t>(validationLayers.size());
       createInfo.ppEnabledLayerNames = validationLayers.data();
 
+      // Specifies what kind of debug informatin is requried
       populateDebugMessengerCreateInfo(debugCreateInfo);
       createInfo.pNext = (VkDebugUtilsMessengerCreateInfoEXT *)&debugCreateInfo;
     } else {
@@ -432,10 +448,13 @@ private:
     SwapChainSupportDetails swapChainSupport =
         querySwapChainSupport(physicalDevice);
 
+    // Different swap chain settings
     VkSurfaceFormatKHR surfaceFormat =
         chooseSwapSurfaceFormat(swapChainSupport.formats);
     VkPresentModeKHR presentMode =
         chooseSwapPresentMode(swapChainSupport.presentModes);
+
+    // Swap extent is the resolution of the swap chain images
     VkExtent2D extent = chooseSwapExtent(swapChainSupport.capabilities);
 
     uint32_t imageCount = swapChainSupport.capabilities.minImageCount + 1;
@@ -480,6 +499,10 @@ private:
       throw std::runtime_error("failed to create swap chain!");
     }
 
+    // To retrieve the images in the swap chain
+    // Only min. no. of images specified during swap chain creation.
+    // Depending upon the implementation the no. of images maybe greater than
+    // the min. specified.
     vkGetSwapchainImagesKHR(device, swapChain, &imageCount, nullptr);
     swapChainImages.resize(imageCount);
     vkGetSwapchainImagesKHR(device, swapChain, &imageCount,
@@ -785,11 +808,13 @@ private:
     allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
     allocInfo.commandBufferCount = (uint32_t)commandBuffers.size();
 
+    // Command Buffers allocated
     if (vkAllocateCommandBuffers(device, &allocInfo, commandBuffers.data()) !=
         VK_SUCCESS) {
       throw std::runtime_error("failed to allocate command buffers!\n");
     }
 
+    // Recording to command buffers
     for (size_t i = 0; i < commandBuffers.size(); i++) {
       VkCommandBufferBeginInfo beginInfo{};
       beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
@@ -800,6 +825,7 @@ private:
         throw std::runtime_error("failed to begin recording command buffer!\n");
       }
 
+      // Drawing begins with Render Pass
       VkRenderPassBeginInfo renderPassInfo{};
       renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
       renderPassInfo.renderPass = renderPass;
@@ -814,9 +840,11 @@ private:
       vkCmdBeginRenderPass(commandBuffers[i], &renderPassInfo,
                            VK_SUBPASS_CONTENTS_INLINE);
 
+      // Bind the command buffer to the graphics pipeline.
       vkCmdBindPipeline(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS,
                         graphicsPipeline);
 
+      // Vertex and Index data binding for the vertex shader stage.
       VkBuffer vertexBuffers[] = {vertexBuffer};
       VkDeviceSize offsets[] = {0};
       vkCmdBindVertexBuffers(commandBuffers[i], 0, 1, vertexBuffers, offsets);
@@ -824,6 +852,8 @@ private:
       vkCmdBindIndexBuffer(commandBuffers[i], indexBuffer, 0,
                            VK_INDEX_TYPE_UINT16);
 
+      // Descriptor sets define how the vertex and index data has to be
+      // interpreted in the vertex/fragment shader.
       vkCmdBindDescriptorSets(commandBuffers[i],
                               VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout,
                               0, 1, &descriptorSets[i], 0, nullptr);
@@ -1351,6 +1381,11 @@ private:
     return shaderModule;
   }
 
+  // To populate the debug callback info struct
+  // This struct contians the pointer to the actual call back function
+  // This struct is passed to the Vulkan API to tell it about the callback fn.
+  // The explicit handle is stored in a Vulkan object ->
+  // VkDebugUtilsMessengerEXT
   void populateDebugMessengerCreateInfo(
       VkDebugUtilsMessengerCreateInfoEXT &createInfo) {
     createInfo = {};
@@ -1378,14 +1413,20 @@ private:
     }
   }
 
+  // To pick the physical device
+  // To see if the physical device has the required properties.
+  // To see if the physical device supports requried features.
+  // To see if the physical device suports required queues.
   void pickPhysicalDevice() {
     uint32_t deviceCount = 0;
+    // Gets the count of supported Vulkan devices in the system
     vkEnumeratePhysicalDevices(instance, &deviceCount, nullptr);
 
     if (deviceCount == 0) {
       throw std::runtime_error("failed to find GPUs with Vulkan support!");
     }
 
+    // Retrives the information of the available Vulkan devices in a vector
     std::vector<VkPhysicalDevice> devices(deviceCount);
     vkEnumeratePhysicalDevices(instance, &deviceCount, devices.data());
 
@@ -1447,6 +1488,9 @@ private:
       throw std::runtime_error("failed to create logical device!");
     }
 
+    // The queues are automatically created during the logical device creation.
+    // We need to retrieve their handle and store in a class memeber to
+    // reference them for later use.
     vkGetDeviceQueue(device, indices.graphicsFamily.value(), 0, &graphicsQueue);
     vkGetDeviceQueue(device, indices.presentFamily.value(), 0, &presentQueue);
   }
@@ -1637,6 +1681,7 @@ private:
     return details;
   }
 
+  // This is the callback fuction which is called by the Valdiation Layer
   static VKAPI_ATTR VkBool32 VKAPI_CALL
   debugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
                 VkDebugUtilsMessageTypeFlagsEXT messageType,
