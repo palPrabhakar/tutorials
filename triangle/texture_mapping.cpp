@@ -852,7 +852,7 @@ private:
 
     if (vkCreateSampler(device, &samplerInfo, nullptr, &textureSampler) !=
         VK_SUCCESS) {
-      throw std::runtime_error("failed to create texture sampler!\n");
+      throw std::runtime_error("failed to create texture sampler!");
     }
   }
 
@@ -897,7 +897,7 @@ private:
     imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
     if (vkCreateImage(device, &imageInfo, nullptr, &image) != VK_SUCCESS) {
-      throw std::runtime_error("failed to create image!\n");
+      throw std::runtime_error("failed to create image!");
     }
 
     VkMemoryRequirements memRequirements;
@@ -911,7 +911,7 @@ private:
 
     if (vkAllocateMemory(device, &allocInfo, nullptr, &imageMemory) !=
         VK_SUCCESS) {
-      throw std::runtime_error("failed to allocate image memory!\n");
+      throw std::runtime_error("failed to allocate image memory!");
     }
 
     vkBindImageMemory(device, image, imageMemory, 0);
@@ -961,7 +961,7 @@ private:
     endSingleTimeCommands(commandBuffer);
   }
 
-  void copyBufferToImage(VkBuffer buffer, VkImage image, uint32_t widht,
+  void copyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width,
                          uint32_t height) {
     VkCommandBuffer commandBuffer = beginSingleTimeCommands();
 
@@ -974,7 +974,7 @@ private:
     region.imageSubresource.baseArrayLayer = 0;
     region.imageSubresource.layerCount = 1;
     region.imageOffset = {0, 0, 0};
-    region.imageExtent = {widht, height, 1};
+    region.imageExtent = {width, height, 1};
 
     vkCmdCopyBufferToImage(commandBuffer, buffer, image,
                            VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);
@@ -1065,7 +1065,7 @@ private:
 
     if (vkCreateDescriptorPool(device, &poolInfo, nullptr, &descriptorPool) !=
         VK_SUCCESS) {
-      throw std::runtime_error("failed to create descriptor pool!\n");
+      throw std::runtime_error("failed to create descriptor pool!");
     }
   }
 
@@ -1131,7 +1131,7 @@ private:
     bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
     if (vkCreateBuffer(device, &bufferInfo, nullptr, &buffer) != VK_SUCCESS) {
-      throw std::runtime_error("failed to create vertex buffer!\n");
+      throw std::runtime_error("failed to create buffer!");
     }
 
     VkMemoryRequirements memRequirements;
@@ -1145,7 +1145,7 @@ private:
 
     if (vkAllocateMemory(device, &allocInfo, nullptr, &bufferMemory) !=
         VK_SUCCESS) {
-      throw std::runtime_error("failed to create vertex buffer memory!\n");
+      throw std::runtime_error("failed to allocate buffer memory!");
     }
 
     vkBindBufferMemory(device, buffer, bufferMemory, 0);
@@ -1221,7 +1221,7 @@ private:
 
     if (vkAllocateCommandBuffers(device, &allocInfo, commandBuffers.data()) !=
         VK_SUCCESS) {
-      throw std::runtime_error("failed to allocate command buffers!\n");
+      throw std::runtime_error("failed to allocate command buffers!");
     }
 
     for (size_t i = 0; i < commandBuffers.size(); i++) {
@@ -1229,7 +1229,7 @@ private:
       beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 
       if (vkBeginCommandBuffer(commandBuffers[i], &beginInfo) != VK_SUCCESS) {
-        throw std::runtime_error("failed to begin recording command buffer!\n");
+        throw std::runtime_error("failed to begin recording command buffer!");
       }
 
       VkRenderPassBeginInfo renderPassInfo{};
@@ -1266,7 +1266,7 @@ private:
       vkCmdEndRenderPass(commandBuffers[i]);
 
       if (vkEndCommandBuffer(commandBuffers[i]) != VK_SUCCESS) {
-        throw std::runtime_error("failed to record command buffer!\n");
+        throw std::runtime_error("failed to record command buffer!");
       }
     }
   }
@@ -1313,7 +1313,7 @@ private:
                     glm::vec3(0.0f, 0.0f, 1.0f));
     ubo.proj = glm::perspective(
         glm::radians(45.0f),
-        swapChainExtent.width / (float)swapChainExtent.height, 0.1f, 10.f);
+        swapChainExtent.width / (float)swapChainExtent.height, 0.1f, 10.0f);
     ubo.proj[1][1] *= -1;
 
     void *data;
@@ -1368,7 +1368,7 @@ private:
 
     if (vkQueueSubmit(graphicsQueue, 1, &submitInfo,
                       inFlightFences[currentFrame]) != VK_SUCCESS) {
-      throw std::runtime_error("failed to submit draw command buffer!\n");
+      throw std::runtime_error("failed to submit draw command buffer!");
     }
 
     VkPresentInfoKHR presentInfo{};
@@ -1405,7 +1405,7 @@ private:
     VkShaderModule shaderModule;
     if (vkCreateShaderModule(device, &createInfo, nullptr, &shaderModule) !=
         VK_SUCCESS) {
-      throw std::runtime_error("failed to create shader module");
+      throw std::runtime_error("failed to create shader module!");
     }
 
     return shaderModule;
@@ -1415,7 +1415,7 @@ private:
       const std::vector<VkSurfaceFormatKHR> &availableFormats) {
     for (const auto &availableFormat : availableFormats) {
       if (availableFormat.format == VK_FORMAT_B8G8R8A8_SRGB &&
-          availableFormat.colorSpace == VK_COLORSPACE_SRGB_NONLINEAR_KHR) {
+          availableFormat.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR) {
         return availableFormat;
       }
     }
@@ -1600,7 +1600,7 @@ private:
     std::ifstream file(filename, std::ios::ate | std::ios::binary);
 
     if (!file.is_open()) {
-      throw std::runtime_error("failed to open file!\n");
+      throw std::runtime_error("failed to open file!");
     }
 
     size_t fileSize = (size_t)file.tellg();

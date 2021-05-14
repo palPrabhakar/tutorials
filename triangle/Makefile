@@ -12,7 +12,11 @@ endif
 
 
 
-all: *.cpp
-	g++ $(CFLAGS) -o a.out *.cpp $(LDFLAGS)
+all: main.cpp
+	g++ $(CFLAGS) -o a.out main.cpp $(LDFLAGS)
+
+test: texture_mapping.cpp
+	g++ $(CFLAGS) -o a.out texture_mapping.cpp $(LDFLAGS)
+
 
 
