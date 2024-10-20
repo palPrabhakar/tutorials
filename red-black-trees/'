@@ -180,21 +180,17 @@ void rb_print_tree(tree_t *tree, FILE *f) {
     while (queue->size != 0) {
       node_t *node;
       CHECK_QUEUE(queue_pop(queue, (void **)&node),
-                  "Error: queue_pop() failed at %d.\n", __LINE__)
+                  "Error: queue_pop() failed.\n")
 
       fprintf(f, "%d [fillcolor=%s fontcolor=white];\n", *(int *)node->data,
               node_color(node->color));
 
       if (node->l != &nil) {
         fprintf(f, "%d -> %d;\n", *(int *)node->data, *(int *)node->l->data);
-        CHECK_QUEUE(queue_push(queue, node->l),
-                    "Error: queue_push() failed at %d.\n", __LINE__);
       }
 
       if (node->r != &nil) {
         fprintf(f, "%d -> %d;\n", *(int *)node->data, *(int *)node->r->data);
-        CHECK_QUEUE(queue_push(queue, node->r),
-                    "Error: queue_push() failed at %d.\n", __LINE__);
       }
     }
   }

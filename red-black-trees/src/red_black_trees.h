@@ -1,5 +1,6 @@
 #ifndef RBT_H
 #define RBT_H
+#include <stdio.h>
 
 typedef enum color { red, black } color_t;
 
@@ -20,6 +21,6 @@ node_t *rb_delete(tree_t *, node_t *);
 // for now print to stdout
 // typedef const char * (*to_string)(void *);
 // void rb_print_tree(tree_t *, to_string);
-void rb_print_tree(tree_t *);
+void rb_print_tree(tree_t *, FILE *);
 
 #endif
