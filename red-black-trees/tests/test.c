@@ -16,7 +16,7 @@
   assert(queue_pop(queue, (node)) && "error: pop succeeded.\n");
 
 #define ASSERT_SIZE(queue, x)                                                  \
-  assert((queue)->size == (x) && "error: unexpected queue size.\n");
+  assert(queue_size(queue) == (x) && "error: unexpected queue size.\n");
 
 #define ASSERT_VALUE(ptr, x)                                                   \
   assert((*ptr) == (x) && "error: unexpected value!.\n")

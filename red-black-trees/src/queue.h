@@ -3,13 +3,7 @@
 
 #include <stddef.h>
 
-typedef struct queue {
-  void **data;
-  size_t top;
-  size_t end;
-  size_t size;
-  size_t max;
-} queue_t;
+typedef struct queue queue_t;
 
 // size_t: max_elements
 queue_t *init_queue(size_t);
@@ -19,5 +13,6 @@ queue_t *init_queue(size_t);
 // failure: return 0
 int queue_push(queue_t *, void *);
 int queue_pop(queue_t *, void **);
+size_t queue_size(queue_t *);
 
 #endif

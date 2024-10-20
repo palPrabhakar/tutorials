@@ -177,7 +177,7 @@ void rb_print_tree(tree_t *tree, FILE *f) {
 
     queue_push(queue, tree->root);
 
-    while (queue->size != 0) {
+    while (queue_size(queue) != 0) {
       node_t *node;
       CHECK_QUEUE(queue_pop(queue, (void **)&node),
                   "Error: queue_pop() failed at %d.\n", __LINE__)

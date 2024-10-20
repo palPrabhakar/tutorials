@@ -3,6 +3,14 @@
 
 #include "queue.h"
 
+struct queue {
+  void **data;
+  size_t top;
+  size_t end;
+  size_t size;
+  size_t max;
+};
+
 queue_t *init_queue(size_t size) {
   queue_t *queue = malloc(sizeof(queue_t));
   queue->data = malloc(size * sizeof(void *));
@@ -38,3 +46,5 @@ int queue_pop(queue_t *queue, void **elem) {
   queue->top = (queue->top + 1) % queue->max;
   return 0;
 }
+
+size_t queue_size(queue_t *queue) { return queue->size; }
