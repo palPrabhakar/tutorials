@@ -48,6 +48,8 @@ int main(void) {
   *iptr = 9;
   rb_insert(rbt, create_node(iptr));
 
+  rb_delete(rbt, rb_root(rbt));
+
   rb_print_tree(rbt, stdout);
 
   return 0;
