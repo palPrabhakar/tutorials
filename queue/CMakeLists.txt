@@ -8,7 +8,7 @@ set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED True)
 set(CMAKE_C_FLAGS "-Wall -Wextra -g -O2")
 
-# add_subdirectory(test)
-add_subdirectory(src)
+add_subdirectory(test)
+# add_subdirectory(src)
 
 
