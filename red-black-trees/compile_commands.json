@@ -1,0 +1,14 @@
+[
+{
+  "directory": "/home/pal/workspace/tutorials/red-black-trees/build",
+  "command": "/usr/bin/cc   -Wall -Wextra -g -std=gnu11 -o CMakeFiles/rbt.dir/src/main.c.o -c /home/pal/workspace/tutorials/red-black-trees/src/main.c",
+  "file": "/home/pal/workspace/tutorials/red-black-trees/src/main.c",
+  "output": "CMakeFiles/rbt.dir/src/main.c.o"
+},
+{
+  "directory": "/home/pal/workspace/tutorials/red-black-trees/build",
+  "command": "/usr/bin/cc   -Wall -Wextra -g -std=gnu11 -o CMakeFiles/rbt.dir/src/red_black_trees.c.o -c /home/pal/workspace/tutorials/red-black-trees/src/red_black_trees.c",
+  "file": "/home/pal/workspace/tutorials/red-black-trees/src/red_black_trees.c",
+  "output": "CMakeFiles/rbt.dir/src/red_black_trees.c.o"
+}
+]

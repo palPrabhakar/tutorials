@@ -1,9 +1,12 @@
 #include "red_black_trees.h"
+#include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 struct tree {
   node_t *root;
   comparator f;
+  size_t n;
 };
 
 struct node {
@@ -22,6 +25,7 @@ tree_t *init_tree(comparator f) {
   tree_t *tree = malloc(sizeof(tree_t));
   tree->root = &nil;
   tree->f = f;
+  tree->n = 0;
   return tree;
 }
 
@@ -58,6 +62,7 @@ void rb_insert(tree_t *tree, node_t *node) {
   }
 
   rb_insert_fixup(tree, node);
+  tree->n++;
 }
 
 void rb_insert_fixup(tree_t *tree, node_t *node) {
@@ -143,3 +148,15 @@ void rb_rotate_right(tree_t *tree, node_t *node) {
   child->r = node;
   node->p = child;
 }
+
+static const char *node_color(color_t color) {
+  switch (color) {
+  case red:
+    return "red";
+  case black:
+    return "black";
+  default:
+    return "";
+  }
+}
+
