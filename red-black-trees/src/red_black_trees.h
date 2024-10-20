@@ -18,9 +18,15 @@ tree_t *init_tree(comparator);
 void rb_insert(tree_t *, node_t *);
 void rb_delete(tree_t *, node_t *);
 
-// typedef const char * (*to_string)(void *);
-// void rb_print_tree(tree_t *, to_string);
-void rb_print_tree(tree_t *, FILE *);
+// FILE *: write to file
+// to_string: function to convert data to char *
+//    -char *: buffer
+//    -void *: data
+// size_t: buffer_size
+// buffer_size should be large enough to
+// hold char * converted data
+typedef void (*to_string)(char *, void *);
+void rb_print_tree(tree_t *, FILE *, to_string, size_t);
 
 node_t *rb_root(tree_t *);
 

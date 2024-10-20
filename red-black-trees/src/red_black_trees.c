@@ -57,9 +57,7 @@ node_t *create_node(void *data) {
   return node;
 }
 
-node_t *rb_root(tree_t *tree) {
-  return tree->root;
-}
+node_t *rb_root(tree_t *tree) { return tree->root; }
 
 void rb_insert(tree_t *tree, node_t *node) {
   node_t *parent = &nil;
@@ -271,7 +269,7 @@ void rb_delete_fixup(tree_t *tree, node_t *node) {
         sibling->color = red;
         node = node->p;
       } else {
-        if(sibling->l->color == black) {
+        if (sibling->l->color == black) {
           sibling->r->color = black;
           sibling->color = red;
           rb_rotate_left(tree, sibling);
@@ -301,9 +299,12 @@ static const char *node_color(color_t color) {
   }
 }
 
-void rb_print_tree(tree_t *tree, FILE *f) {
+void rb_print_tree(tree_t *tree, FILE *f, to_string to_str, size_t buf_size) {
   fprintf(f, "digraph RedBlackTree {\n");
   fprintf(f, "node [shape=circle style=filled];\n");
+
+  char node_buffer[buf_size];
+  char child_buffer[buf_size];
 
   if (tree->root != &nil) {
 
@@ -315,18 +316,20 @@ void rb_print_tree(tree_t *tree, FILE *f) {
       node_t *node;
       CHECK_QUEUE(queue_pop(queue, (void **)&node),
                   "Error: queue_pop() failed at %d.\n", __LINE__)
-
-      fprintf(f, "%d [fillcolor=%s fontcolor=white];\n", *(int *)node->data,
+      to_str(node_buffer, node->data);
+      fprintf(f, "%s [fillcolor=%s fontcolor=white];\n", node_buffer,
               node_color(node->color));
 
       if (node->l != &nil) {
-        fprintf(f, "%d -> %d;\n", *(int *)node->data, *(int *)node->l->data);
+        to_str(child_buffer, node->l->data);
+        fprintf(f, "%s -> %s;\n", node_buffer, child_buffer);
         CHECK_QUEUE(queue_push(queue, node->l),
                     "Error: queue_push() failed at %d.\n", __LINE__);
       }
 
       if (node->r != &nil) {
-        fprintf(f, "%d -> %d;\n", *(int *)node->data, *(int *)node->r->data);
+        to_str(child_buffer, node->r->data);
+        fprintf(f, "%s -> %s;\n", node_buffer, child_buffer);
         CHECK_QUEUE(queue_push(queue, node->r),
                     "Error: queue_push() failed at %d.\n", __LINE__);
       }

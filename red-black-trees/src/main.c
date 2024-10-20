@@ -1,5 +1,6 @@
-#include <stdlib.h>
 #include <assert.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 #include "red_black_trees.h"
 
@@ -8,6 +9,8 @@ int compare(void *a, void *b) {
   int *y = b;
   return *x < *y;
 }
+
+void convert(char *buffer, void *data) { sprintf(buffer, "%d", *(int *)data); }
 
 int main(void) {
   tree_t *rbt = init_tree(compare);
@@ -50,7 +53,7 @@ int main(void) {
 
   rb_delete(rbt, rb_root(rbt));
 
-  rb_print_tree(rbt, stdout);
+  rb_print_tree(rbt, stdout, convert, 8);
 
   return 0;
 }
