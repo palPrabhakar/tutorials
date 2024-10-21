@@ -10,18 +10,6 @@
     break;                                                                     \
   }
 
-struct tree {
-  node_t *root;
-  comparator f;
-  size_t n;
-};
-
-struct node {
-  struct node *p, *l, *r;
-  color_t color;
-  void *data;
-};
-
 static node_t nil = {.color = black};
 
 static void rb_insert_fixup(tree_t *, node_t *);
