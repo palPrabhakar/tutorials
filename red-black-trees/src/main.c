@@ -7,7 +7,13 @@
 int compare(void *a, void *b) {
   int *x = a;
   int *y = b;
-  return *x < *y;
+  if (*x == *y) {
+    return 0;
+  } else if (*x < *y) {
+    return -1;
+  } else {
+    return 1;
+  }
 }
 
 void convert(char *buffer, void *data) { sprintf(buffer, "%d", *(int *)data); }
@@ -51,7 +57,9 @@ int main(void) {
   *iptr = 9;
   rb_insert(rbt, create_node(iptr));
 
-  rb_delete(rbt, rb_root(rbt));
+  // rb_delete(rbt, rb_root(rbt));
+  int key = 5;
+  rb_delete_key(rbt, &key);
 
   rb_print_tree(rbt, stdout, convert, 8);
 

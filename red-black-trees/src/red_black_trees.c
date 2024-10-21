@@ -18,10 +18,11 @@ static void rb_rotate_right(tree_t *, node_t *);
 static void rb_transplant(tree_t *, node_t *, node_t *);
 static void rb_delete_fixup(tree_t *, node_t *);
 static node_t *tree_minimum(node_t *);
+static int rb_node_impl(tree_t *, node_t *cur, void *, node_t **);
 
-node_t *tree_minimum(node_t *node) {
-  while (node->l != &nil) {
-    node = node->l;
+static node_t *tree_minimum(node_t *node) {
+  while (node->left != &nil) {
+    node = node->left;
   }
 
   return node;
@@ -30,8 +31,8 @@ node_t *tree_minimum(node_t *node) {
 tree_t *init_tree(comparator f) {
   tree_t *tree = malloc(sizeof(tree_t));
   tree->root = &nil;
-  tree->f = f;
-  tree->n = 0;
+  tree->compare = f;
+  tree->size = 0;
   return tree;
 }
 
@@ -39,13 +40,34 @@ node_t *create_node(void *data) {
   node_t *node = malloc(sizeof(node_t));
   node->color = red;
   node->data = data;
-  node->r = &nil;
-  node->l = &nil;
-  node->p = &nil;
+  node->right = &nil;
+  node->left = &nil;
+  node->parent = &nil;
   return node;
 }
 
 node_t *rb_root(tree_t *tree) { return tree->root; }
+
+static int rb_node_impl(tree_t *tree, node_t *cur, void *key, node_t **node) {
+  if (cur == &nil) {
+    return 1;
+  }
+
+  int cond = tree->compare(key, cur->data);
+
+  if (cond == 0) {
+    *node = cur;
+    return 0;
+  } else if (cond == -1) {
+    return rb_node_impl(tree, cur->left, key, node);
+  } else {
+    return rb_node_impl(tree, cur->right, key, node);
+  }
+}
+
+int rb_node(tree_t *tree, void *key, node_t **node) {
+  return rb_node_impl(tree, tree->root, key, node);
+}
 
 void rb_insert(tree_t *tree, node_t *node) {
   node_t *parent = &nil;
@@ -53,63 +75,63 @@ void rb_insert(tree_t *tree, node_t *node) {
 
   while (child != &nil) {
     parent = child;
-    if (tree->f(node->data, child->data)) {
-      child = child->l;
+    if (tree->compare(node->data, child->data) == -1) {
+      child = child->left;
     } else {
-      child = child->r;
+      child = child->right;
     }
   }
 
-  node->p = parent;
+  node->parent = parent;
   if (parent == &nil) {
     tree->root = node;
-  } else if (tree->f(node->data, parent->data)) {
-    parent->l = node;
+  } else if (tree->compare(node->data, parent->data) == -1) {
+    parent->left = node;
   } else {
-    parent->r = node;
+    parent->right = node;
   }
 
   rb_insert_fixup(tree, node);
-  tree->n++;
+  tree->size++;
 }
 
-void rb_insert_fixup(tree_t *tree, node_t *node) {
+static void rb_insert_fixup(tree_t *tree, node_t *node) {
   node_t *uncle;
-  while (node->p->color == red) {
-    if (node->p == node->p->p->l) {
-      uncle = node->p->p->r;
+  while (node->parent->color == red) {
+    if (node->parent == node->parent->parent->left) {
+      uncle = node->parent->parent->right;
       if (uncle->color == red) {
-        node->p->color = black;
+        node->parent->color = black;
         uncle->color = black;
-        node->p->p->color = red;
-        node = node->p->p;
+        node->parent->parent->color = red;
+        node = node->parent->parent;
       } else {
-        if (node == node->p->r) {
-          node = node->p;
+        if (node == node->parent->right) {
+          node = node->parent;
           rb_rotate_left(tree, node);
         }
 
-        node->p->color = black;
-        node->p->p->color = red;
+        node->parent->color = black;
+        node->parent->parent->color = red;
 
-        rb_rotate_right(tree, node->p->p);
+        rb_rotate_right(tree, node->parent->parent);
       }
     } else {
-      uncle = node->p->p->l;
+      uncle = node->parent->parent->left;
       if (uncle->color == red) {
-        node->p->color = black;
+        node->parent->color = black;
         uncle->color = black;
-        node->p->p->color = red;
-        node = node->p->p;
+        node->parent->parent->color = red;
+        node = node->parent->parent;
       } else {
-        if (node == node->p->l) {
-          node = node->p;
+        if (node == node->parent->left) {
+          node = node->parent;
           rb_rotate_right(tree, node);
         }
 
-        node->p->color = black;
-        node->p->p->color = red;
-        rb_rotate_left(tree, node->p->p);
+        node->parent->color = black;
+        node->parent->parent->color = red;
+        rb_rotate_left(tree, node->parent->parent);
       }
     }
   }
@@ -117,55 +139,66 @@ void rb_insert_fixup(tree_t *tree, node_t *node) {
   tree->root->color = black;
 }
 
-void rb_rotate_left(tree_t *tree, node_t *node) {
-  node_t *child = node->r;
-  node->r = child->l;
-  if (child->l != &nil) {
-    child->l->p = node;
+static void rb_rotate_left(tree_t *tree, node_t *node) {
+  node_t *child = node->right;
+  node->right = child->left;
+  if (child->left != &nil) {
+    child->left->parent = node;
   }
 
-  child->p = node->p;
-  if (node->p == &nil) {
+  child->parent = node->parent;
+  if (node->parent == &nil) {
     tree->root = child;
-  } else if (node == node->p->l) {
-    node->p->l = child;
+  } else if (node == node->parent->left) {
+    node->parent->left = child;
   } else {
-    node->p->r = child;
+    node->parent->right = child;
   }
 
-  child->l = node;
-  node->p = child;
+  child->left = node;
+  node->parent = child;
 }
 
-void rb_rotate_right(tree_t *tree, node_t *node) {
-  node_t *child = node->l;
-  node->l = child->r;
-  if (child->r != &nil) {
-    child->r->p = node;
+static void rb_rotate_right(tree_t *tree, node_t *node) {
+  node_t *child = node->left;
+  node->left = child->right;
+  if (child->right != &nil) {
+    child->right->parent = node;
   }
 
-  child->p = node->p;
-  if (node->p == &nil) {
+  child->parent = node->parent;
+  if (node->parent == &nil) {
     tree->root = child;
-  } else if (node == node->p->l) {
-    node->p->l = child;
+  } else if (node == node->parent->left) {
+    node->parent->left = child;
   } else {
-    node->p->r = child;
+    node->parent->right = child;
   }
 
-  child->r = node;
-  node->p = child;
+  child->right = node;
+  node->parent = child;
 }
 
-void rb_transplant(tree_t *tree, node_t *u, node_t *v) {
-  if (u->p == &nil) {
+static void rb_transplant(tree_t *tree, node_t *u, node_t *v) {
+  if (u->parent == &nil) {
     tree->root = v;
-  } else if (u == u->p->l) {
-    u->p->l = v;
+  } else if (u == u->parent->left) {
+    u->parent->left = v;
   } else {
-    u->p->r = v;
+    u->parent->right = v;
   }
-  v->p = u->p;
+  v->parent = u->parent;
+}
+
+int rb_delete_key(tree_t *tree, void *key) {
+  node_t *node;
+  if(rb_node(tree, key, &node)) {
+    return 1;
+  }
+
+  rb_delete(tree, node);
+
+  return 0;
 }
 
 void rb_delete(tree_t *tree, node_t *node) {
@@ -173,33 +206,33 @@ void rb_delete(tree_t *tree, node_t *node) {
   color_t tmp_color = tmp->color;
   node_t *tmp_succ;
 
-  if (node->l == &nil) {
-    tmp_succ = node->r;
-    rb_transplant(tree, node, node->r);
-  } else if (node->r == &nil) {
-    tmp_succ = node->l;
-    rb_transplant(tree, node, node->l);
+  if (node->left == &nil) {
+    tmp_succ = node->right;
+    rb_transplant(tree, node, node->right);
+  } else if (node->right == &nil) {
+    tmp_succ = node->left;
+    rb_transplant(tree, node, node->left);
   } else {
-    tmp = tree_minimum(node->r);
+    tmp = tree_minimum(node->right);
     tmp_color = tmp->color;
-    tmp_succ = tmp->r;
+    tmp_succ = tmp->right;
 
-    if (tmp->p == node) {
+    if (tmp->parent == node) {
       /*
       Although you might think that setting x.p to y in line 16 is unnecessary
       since x is a child of y, the call of RB-DELETE-FIXUP relies on x.p being
       y even if x is T.nil. -Cormen et. al 4th ed.
       */
-      tmp_succ->p = tmp;
+      tmp_succ->parent = tmp;
     } else {
-      rb_transplant(tree, tmp, tmp->r);
-      tmp->r = node->r;
-      tmp->r->p = tmp;
+      rb_transplant(tree, tmp, tmp->right);
+      tmp->right = node->right;
+      tmp->right->parent = tmp;
     }
 
     rb_transplant(tree, node, tmp);
-    tmp->l = node->l;
-    tmp->l->p = tmp;
+    tmp->left = node->left;
+    tmp->left->parent = tmp;
     tmp->color = node->color;
   }
 
@@ -208,7 +241,7 @@ void rb_delete(tree_t *tree, node_t *node) {
   }
 }
 
-void rb_delete_fixup(tree_t *tree, node_t *node) {
+static void rb_delete_fixup(tree_t *tree, node_t *node) {
   // If node is a red-black node then skip while loop and
   // simply color the node black
   // If node is root then skip while loop and simply
@@ -216,58 +249,58 @@ void rb_delete_fixup(tree_t *tree, node_t *node) {
   // else:
   node_t *sibling;
   while (node != tree->root && node->color == black) {
-    if (node == node->p->l) {
-      sibling = node->p->r;
+    if (node == node->parent->left) {
+      sibling = node->parent->right;
 
       if (sibling->color == red) {
         sibling->color = black;
-        node->p->color = red;
-        rb_rotate_left(tree, node->p);
-        sibling = node->p->r;
+        node->parent->color = red;
+        rb_rotate_left(tree, node->parent);
+        sibling = node->parent->right;
       }
 
-      if (sibling->l->color == black && sibling->r->color) {
+      if (sibling->left->color == black && sibling->right->color) {
         sibling->color = red;
-        node = node->p;
+        node = node->parent;
       } else {
-        if (sibling->r->color == black) {
-          sibling->l->color = black;
+        if (sibling->right->color == black) {
+          sibling->left->color = black;
           sibling->color = red;
           rb_rotate_right(tree, sibling);
-          sibling = node->p->r;
+          sibling = node->parent->right;
         }
 
-        sibling->color = node->p->color;
-        node->p->color = black;
-        sibling->r->color = black;
-        rb_rotate_left(tree, node->p);
+        sibling->color = node->parent->color;
+        node->parent->color = black;
+        sibling->right->color = black;
+        rb_rotate_left(tree, node->parent);
         node = tree->root;
       }
     } else {
-      sibling = node->p->l;
+      sibling = node->parent->left;
 
       if (sibling->color == red) {
         sibling->color = black;
-        node->p->color = red;
-        rb_rotate_left(tree, node->p);
-        sibling = node->p->l;
+        node->parent->color = red;
+        rb_rotate_left(tree, node->parent);
+        sibling = node->parent->left;
       }
 
-      if (sibling->l->color == black && sibling->r->color == black) {
+      if (sibling->left->color == black && sibling->right->color == black) {
         sibling->color = red;
-        node = node->p;
+        node = node->parent;
       } else {
-        if (sibling->l->color == black) {
-          sibling->r->color = black;
+        if (sibling->left->color == black) {
+          sibling->right->color = black;
           sibling->color = red;
           rb_rotate_left(tree, sibling);
-          sibling = node->p->l;
+          sibling = node->parent->left;
         }
 
-        sibling->color = node->p->color;
-        node->p->color = black;
-        sibling->l->color = black;
-        rb_rotate_right(tree, node->p);
+        sibling->color = node->parent->color;
+        node->parent->color = black;
+        sibling->left->color = black;
+        rb_rotate_right(tree, node->parent);
         node = tree->root;
       }
     }
@@ -296,7 +329,7 @@ void rb_print_tree(tree_t *tree, FILE *f, to_string to_str, size_t buf_size) {
 
   if (tree->root != &nil) {
 
-    queue_t *queue = init_queue(tree->n);
+    queue_t *queue = init_queue(tree->size);
 
     queue_push(queue, tree->root);
 
@@ -308,17 +341,17 @@ void rb_print_tree(tree_t *tree, FILE *f, to_string to_str, size_t buf_size) {
       fprintf(f, "%s [fillcolor=%s fontcolor=white];\n", node_buffer,
               node_color(node->color));
 
-      if (node->l != &nil) {
-        to_str(child_buffer, node->l->data);
+      if (node->left != &nil) {
+        to_str(child_buffer, node->left->data);
         fprintf(f, "%s -> %s;\n", node_buffer, child_buffer);
-        CHECK_QUEUE(queue_push(queue, node->l),
+        CHECK_QUEUE(queue_push(queue, node->left),
                     "Error: queue_push() failed at %d.\n", __LINE__);
       }
 
-      if (node->r != &nil) {
-        to_str(child_buffer, node->r->data);
+      if (node->right != &nil) {
+        to_str(child_buffer, node->right->data);
         fprintf(f, "%s -> %s;\n", node_buffer, child_buffer);
-        CHECK_QUEUE(queue_push(queue, node->r),
+        CHECK_QUEUE(queue_push(queue, node->right),
                     "Error: queue_push() failed at %d.\n", __LINE__);
       }
     }

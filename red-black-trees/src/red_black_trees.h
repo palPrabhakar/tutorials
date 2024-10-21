@@ -2,21 +2,24 @@
 #define RBT_H
 #include <stdio.h>
 
-// return a < b
+// returns:
+//   -1: a < b
+//    0: a == b
+//    1: a > b
 typedef int (*comparator)(void *, void *);
 
 typedef enum color { red, black } color_t;
 
 typedef struct node {
-  struct node *p, *l, *r;
+  struct node *parent, *left, *right;
   color_t color;
   void *data;
 } node_t;
 
 typedef struct tree {
   node_t *root;
-  comparator f;
-  size_t n;
+  comparator compare;
+  size_t size;
 } tree_t;
 
 // void *: pointer to data elem
@@ -40,12 +43,13 @@ tree_t *init_tree(comparator);
 // rb_insert will not fail if above conditions are met
 void rb_insert(tree_t *, node_t *);
 
-// TODO: 
-// int rb_delete_key(tree_t *tree, void *key)
-//    - top level fn which can be called to delete a specific key from the tree
-//    - returns:
-//        - 0: if key exists in the tree (successful delete!)
-//        - 1: if key doesn't exists in the tree
+// top level fn which can be called to delete a specific key from the tree
+// tree_t *: a valid tree pointer
+// void *: key to look for
+// returns:
+//    - 0: if key exists in the tree (successful delete!)
+//    - 1: if key doesn't exists in the tree
+int rb_delete_key(tree_t *, void *);
 
 // tree_t *: valid tree pointer 
 // node_t *: a node which exist in the tree
@@ -66,5 +70,13 @@ void rb_print_tree(tree_t *, FILE *, to_string, size_t);
 // returns:
 //    - tree root node
 node_t *rb_root(tree_t *);
+
+// tree_t *: a valid tree pointer
+// void *: key to search for
+// node_t **: sets the node_t * on successful search
+// returns:
+//    0: key found
+//    1: key not found
+int rb_node(tree_t *, void *, node_t **);
 
 #endif
