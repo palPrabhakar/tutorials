@@ -28,9 +28,20 @@ typedef struct tree {
 //    -p, l, r = &nil
 node_t *create_node(void *);
 
+// delete a valid node pointer
+//    - data: ptr must be set 
+// node_t *: dangling after function call
+void delete_node(node_t *);
+
 // comparator: function used to compare keys
 // returns: a red-black-tree 
 tree_t *init_tree(comparator);
+
+// a method to delete the tree and the underlying resource
+// the method also deletes the underlying resource
+// tree_t *: valid tree pointer
+// tree_t *: dangling after function call
+void delete_tree(tree_t *);
 
 // tree_t *: valid tree pointer
 //    - use init_tree to create a valid tree_t*
@@ -46,10 +57,11 @@ void rb_insert(tree_t *, node_t *);
 // top level fn which can be called to delete a specific key from the tree
 // tree_t *: a valid tree pointer
 // void *: key to look for
+// node **: returns the ptr to the deleted node
 // returns:
 //    - 0: if key exists in the tree (successful delete!)
 //    - 1: if key doesn't exists in the tree
-int rb_delete_key(tree_t *, void *);
+int rb_remove_key(tree_t *, void *, node_t **);
 
 // tree_t *: valid tree pointer 
 // node_t *: a node which exist in the tree

@@ -3,10 +3,19 @@
 
 #include <stddef.h>
 
-typedef struct queue queue_t;
+typedef struct queue {
+  void **data;
+  size_t top;
+  size_t end;
+  size_t size;
+  size_t max;
+} queue_t;
 
 // size_t: max_elements
 queue_t *init_queue(size_t);
+
+// queue_t: valid queue ptr
+void delete_queue(queue_t *);
 
 // void *: data
 // success: return 0

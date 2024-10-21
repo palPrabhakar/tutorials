@@ -21,9 +21,7 @@
 #define ASSERT_VALUE(ptr, x)                                                   \
   assert((*ptr) == (x) && "error: unexpected value!.\n")
 
-static void test_queue() {
-  queue_t *queue = init_queue(4);
-
+static void test_queue(queue_t *queue) {
   int *iptr = malloc(sizeof(int));
   *iptr = 1;
   ASSERT_SUCCESS_PUSH(queue, iptr)
@@ -48,6 +46,7 @@ static void test_queue() {
   *iptr = 5;
   ASSERT_FAILURE_PUSH(queue, iptr)
   ASSERT_SIZE(queue, 4);
+  free(iptr);
 
   ASSERT_SUCCESS_POP(queue, (void **)&iptr);
   ASSERT_SIZE(queue, 3);
@@ -60,18 +59,22 @@ static void test_queue() {
   ASSERT_SUCCESS_POP(queue, (void **)&iptr);
   ASSERT_SIZE(queue, 3);
   ASSERT_VALUE(iptr, 2);
+  free(iptr);
 
   ASSERT_SUCCESS_POP(queue, (void **)&iptr);
   ASSERT_SIZE(queue, 2);
   ASSERT_VALUE(iptr, 3);
+  free(iptr);
 
   ASSERT_SUCCESS_POP(queue, (void **)&iptr);
   ASSERT_SIZE(queue, 1);
   ASSERT_VALUE(iptr, 4);
+  free(iptr);
 
   ASSERT_SUCCESS_POP(queue, (void **)&iptr);
   ASSERT_SIZE(queue, 0);
   ASSERT_VALUE(iptr, 5);
+  free(iptr);
 
   ASSERT_FAILURE_POP(queue, (void **)&iptr);
   ASSERT_SIZE(queue, 0);
@@ -79,6 +82,13 @@ static void test_queue() {
 
 int main() {
   printf("Running tests.\n");
-  test_queue();
+  queue_t *queue = init_queue(4);
+  test_queue(queue);
+  while (queue_size(queue) != 0) {
+    int *ptr;
+    queue_pop(queue, (void **)&ptr);
+    free(ptr);
+  }
+  delete_queue(queue);
   printf("Test succeeded.\n");
 }

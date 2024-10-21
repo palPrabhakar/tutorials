@@ -18,7 +18,8 @@ static void rb_rotate_right(tree_t *, node_t *);
 static void rb_transplant(tree_t *, node_t *, node_t *);
 static void rb_delete_fixup(tree_t *, node_t *);
 static node_t *tree_minimum(node_t *);
-static int rb_node_impl(tree_t *, node_t *cur, void *, node_t **);
+static int rb_node_impl(tree_t *, node_t *, void *, node_t **);
+static void delete_tree_impl(node_t *);
 
 static node_t *tree_minimum(node_t *node) {
   while (node->left != &nil) {
@@ -36,6 +37,19 @@ tree_t *init_tree(comparator f) {
   return tree;
 }
 
+static void delete_tree_impl(node_t *node) {
+  if (node != &nil) {
+    delete_tree_impl(node->left);
+    delete_tree_impl(node->right);
+    delete_node(node);
+  }
+}
+
+void delete_tree(tree_t *tree) {
+  delete_tree_impl(tree->root);
+  free(tree);
+}
+
 node_t *create_node(void *data) {
   node_t *node = malloc(sizeof(node_t));
   node->color = red;
@@ -44,6 +58,11 @@ node_t *create_node(void *data) {
   node->left = &nil;
   node->parent = &nil;
   return node;
+}
+
+void delete_node(node_t *node) {
+  free(node->data);
+  free(node);
 }
 
 node_t *rb_root(tree_t *tree) { return tree->root; }
@@ -190,13 +209,12 @@ static void rb_transplant(tree_t *tree, node_t *u, node_t *v) {
   v->parent = u->parent;
 }
 
-int rb_delete_key(tree_t *tree, void *key) {
-  node_t *node;
-  if(rb_node(tree, key, &node)) {
+int rb_remove_key(tree_t *tree, void *key, node_t **node) {
+  if (rb_node(tree, key, node)) {
     return 1;
   }
 
-  rb_delete(tree, node);
+  rb_delete(tree, *node);
 
   return 0;
 }
@@ -355,6 +373,8 @@ void rb_print_tree(tree_t *tree, FILE *f, to_string to_str, size_t buf_size) {
                     "Error: queue_push() failed at %d.\n", __LINE__);
       }
     }
+
+    delete_queue(queue);
   }
 
   fprintf(f, "}\n");

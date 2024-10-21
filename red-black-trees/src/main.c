@@ -57,11 +57,15 @@ int main(void) {
   *iptr = 9;
   rb_insert(rbt, create_node(iptr));
 
-  // rb_delete(rbt, rb_root(rbt));
-  int key = 5;
-  rb_delete_key(rbt, &key);
-
   rb_print_tree(rbt, stdout, convert, 8);
+  
+  int key = 5;
+  node_t *node;
+  rb_remove_key(rbt, &key, &node);
+  delete_node(node);
+
+  delete_tree(rbt);
+
 
   return 0;
 }
