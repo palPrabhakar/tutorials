@@ -19,7 +19,7 @@ static void rb_transplant(tree_t *, node_t *, node_t *);
 static void rb_delete_fixup(tree_t *, node_t *);
 static node_t *tree_minimum(node_t *);
 static int rb_node_impl(tree_t *, node_t *, void *, node_t **);
-static void delete_tree_impl(node_t *);
+static void traverse_tree_impl(node_t *, call_back);
 
 static node_t *tree_minimum(node_t *node) {
   while (node->left != &nil) {
@@ -29,40 +29,32 @@ static node_t *tree_minimum(node_t *node) {
   return node;
 }
 
-tree_t *init_tree(comparator f) {
-  tree_t *tree = malloc(sizeof(tree_t));
+void init_tree(tree_t *tree, comparator f) {
   tree->root = &nil;
   tree->compare = f;
   tree->size = 0;
-  return tree;
 }
 
-static void delete_tree_impl(node_t *node) {
+static void traverse_tree_impl(node_t *node, call_back cb) {
   if (node != &nil) {
-    delete_tree_impl(node->left);
-    delete_tree_impl(node->right);
-    delete_node(node);
+    // node might get deleted during traversal
+    node_t *right = node->right;
+    traverse_tree_impl(node->left, cb);
+    cb(node);
+    traverse_tree_impl(right, cb);
   }
 }
 
-void delete_tree(tree_t *tree) {
-  delete_tree_impl(tree->root);
-  free(tree);
+void traverse_tree(tree_t *tree, call_back cb) {
+  traverse_tree_impl(tree->root, cb);
 }
 
-node_t *create_node(void *data) {
-  node_t *node = malloc(sizeof(node_t));
+void init_node(node_t *node, void *data) {
   node->color = red;
   node->data = data;
   node->right = &nil;
   node->left = &nil;
   node->parent = &nil;
-  return node;
-}
-
-void delete_node(node_t *node) {
-  free(node->data);
-  free(node);
 }
 
 node_t *rb_root(tree_t *tree) { return tree->root; }

@@ -4,6 +4,12 @@
 
 #include "red_black_trees.h"
 
+#define CREATE_NODE(x)                                                         \
+  int *i##x = malloc(sizeof(int));                                             \
+  *i##x = (x);                                                                 \
+  node_t *n##x = malloc(sizeof(node_t));                                       \
+  init_node(n##x, i##x);
+
 int compare(void *a, void *b) {
   int *x = a;
   int *y = b;
@@ -18,54 +24,69 @@ int compare(void *a, void *b) {
 
 void convert(char *buffer, void *data) { sprintf(buffer, "%d", *(int *)data); }
 
+void print(node_t *node) { printf("%d\n", *(int *)node->data); }
+
+void delete(node_t *node) {
+  free(node->data);
+  free(node);
+}
+
 int main(void) {
-  tree_t *rbt = init_tree(compare);
+  {
+    // stack example
+    tree_t tree;
+    init_tree(&tree, compare);
 
-  int *iptr = malloc(sizeof(int));
-  *iptr = 1;
-  rb_insert(rbt, create_node(iptr));
+    int i0 = 0;
+    node_t n0;
+    init_node(&n0, &i0);
+    rb_insert(&tree, &n0);
 
-  iptr = malloc(sizeof(int));
-  *iptr = 2;
-  rb_insert(rbt, create_node(iptr));
+    int i1 = 1;
+    node_t n1;
+    init_node(&n1, &i1);
+    rb_insert(&tree, &n1);
 
-  iptr = malloc(sizeof(int));
-  *iptr = 3;
-  rb_insert(rbt, create_node(iptr));
+    int i2 = 2;
+    node_t n2;
+    init_node(&n2, &i2);
+    rb_insert(&tree, &n2);
 
-  iptr = malloc(sizeof(int));
-  *iptr = 4;
-  rb_insert(rbt, create_node(iptr));
+    int i3 = 3;
+    node_t n3;
+    init_node(&n3, &i3);
+    rb_insert(&tree, &n3);
 
-  iptr = malloc(sizeof(int));
-  *iptr = 5;
-  rb_insert(rbt, create_node(iptr));
+    node_t *node;
+    rb_remove_key(&tree, &i0, &node);
 
-  iptr = malloc(sizeof(int));
-  *iptr = 6;
-  rb_insert(rbt, create_node(iptr));
+    traverse_tree(&tree, print);
+  }
 
-  iptr = malloc(sizeof(int));
-  *iptr = 7;
-  rb_insert(rbt, create_node(iptr));
+  printf("\n\n");
 
-  iptr = malloc(sizeof(int));
-  *iptr = 8;
-  rb_insert(rbt, create_node(iptr));
+  {
+    // heap example
+    tree_t *tree = malloc(sizeof(tree_t));
+    init_tree(tree, compare);
 
-  iptr = malloc(sizeof(int));
-  *iptr = 9;
-  rb_insert(rbt, create_node(iptr));
+    CREATE_NODE(0)
+    rb_insert(tree, n0);
 
-  rb_print_tree(rbt, stdout, convert, 8);
-  
-  int key = 5;
-  node_t *node;
-  rb_remove_key(rbt, &key, &node);
-  delete_node(node);
+    CREATE_NODE(1)
+    rb_insert(tree, n1);
 
-  delete_tree(rbt);
+    CREATE_NODE(2)
+    rb_insert(tree, n2);
 
+    CREATE_NODE(3)
+    rb_insert(tree, n3);
+
+    rb_print_tree(tree, stdout, convert, 8);
+
+    traverse_tree(tree, delete);
+    free(tree);
+  }
 
   return 0;
 }

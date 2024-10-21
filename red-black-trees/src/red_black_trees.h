@@ -26,22 +26,18 @@ typedef struct tree {
 // returns: red-black-tree node ready for insertion
 //    -color: red
 //    -p, l, r = &nil
-node_t *create_node(void *);
-
-// delete a valid node pointer
-//    - data: ptr must be set 
-// node_t *: dangling after function call
-void delete_node(node_t *);
+void init_node(node_t *, void *);
 
 // comparator: function used to compare keys
-// returns: a red-black-tree 
-tree_t *init_tree(comparator);
+// returns: a red-black-tree
+void init_tree(tree_t *, comparator);
 
-// a method to delete the tree and the underlying resource
-// the method also deletes the underlying resource
+// a helper method to do inorder traversal
 // tree_t *: valid tree pointer
-// tree_t *: dangling after function call
-void delete_tree(tree_t *);
+// void (*)(node_t *): callback to run on each node
+// ex usage: delete heap allocated nodes
+typedef void (*call_back)(node_t*);
+void traverse_tree(tree_t *, call_back);
 
 // tree_t *: valid tree pointer
 //    - use init_tree to create a valid tree_t*
@@ -63,7 +59,7 @@ void rb_insert(tree_t *, node_t *);
 //    - 1: if key doesn't exists in the tree
 int rb_remove_key(tree_t *, void *, node_t **);
 
-// tree_t *: valid tree pointer 
+// tree_t *: valid tree pointer
 // node_t *: a node which exist in the tree
 // rb_delete will not fail if above conditions are met
 void rb_delete(tree_t *, node_t *);
@@ -78,7 +74,7 @@ void rb_delete(tree_t *, node_t *);
 typedef void (*to_string)(char *, void *);
 void rb_print_tree(tree_t *, FILE *, to_string, size_t);
 
-// tree_t *: a valid tree pointer 
+// tree_t *: a valid tree pointer
 // returns:
 //    - tree root node
 node_t *rb_root(tree_t *);
