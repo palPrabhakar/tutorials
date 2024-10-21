@@ -339,13 +339,14 @@ void rb_print_tree(tree_t *tree, FILE *f, to_string to_str, size_t buf_size) {
 
   if (tree->root != &nil) {
 
-    queue_t *queue = init_queue(tree->size);
+    queue_t queue;
+    init_queue(&queue, tree->size);
 
-    queue_push(queue, tree->root);
+    queue_push(&queue, tree->root);
 
-    while (queue_size(queue) != 0) {
+    while (queue_size(&queue) != 0) {
       node_t *node;
-      CHECK_QUEUE(queue_pop(queue, (void **)&node),
+      CHECK_QUEUE(queue_pop(&queue, (void **)&node),
                   "Error: queue_pop() failed at %d.\n", __LINE__)
       to_str(node_buffer, node->data);
       fprintf(f, "%s [fillcolor=%s fontcolor=white];\n", node_buffer,
@@ -354,19 +355,19 @@ void rb_print_tree(tree_t *tree, FILE *f, to_string to_str, size_t buf_size) {
       if (node->left != &nil) {
         to_str(child_buffer, node->left->data);
         fprintf(f, "%s -> %s;\n", node_buffer, child_buffer);
-        CHECK_QUEUE(queue_push(queue, node->left),
+        CHECK_QUEUE(queue_push(&queue, node->left),
                     "Error: queue_push() failed at %d.\n", __LINE__);
       }
 
       if (node->right != &nil) {
         to_str(child_buffer, node->right->data);
         fprintf(f, "%s -> %s;\n", node_buffer, child_buffer);
-        CHECK_QUEUE(queue_push(queue, node->right),
+        CHECK_QUEUE(queue_push(&queue, node->right),
                     "Error: queue_push() failed at %d.\n", __LINE__);
       }
     }
 
-    delete_queue(queue);
+    free_queue(&queue);
   }
 
   fprintf(f, "}\n");

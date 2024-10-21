@@ -3,19 +3,16 @@
 
 #include "queue.h"
 
-queue_t *init_queue(size_t size) {
-  queue_t *queue = malloc(sizeof(queue_t));
+void init_queue(queue_t *queue, size_t size) {
   queue->data = malloc(size * sizeof(void *));
   queue->max = size;
   queue->size = 0;
   queue->top = 0;
   queue->end = 0;
-  return queue;
 }
 
-void delete_queue(queue_t *queue) {
+void free_queue(queue_t *queue) {
   free(queue->data);
-  free(queue);
 }
 
 int queue_push(queue_t *queue, void *elem) {

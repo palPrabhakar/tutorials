@@ -22,73 +22,59 @@
   assert((*ptr) == (x) && "error: unexpected value!.\n")
 
 static void test_queue(queue_t *queue) {
-  int *iptr = malloc(sizeof(int));
-  *iptr = 1;
-  ASSERT_SUCCESS_PUSH(queue, iptr)
+  int i1 = 1;
+  ASSERT_SUCCESS_PUSH(queue, &i1)
   ASSERT_SIZE(queue, 1)
 
-  iptr = malloc(sizeof(int));
-  *iptr = 2;
-  ASSERT_SUCCESS_PUSH(queue, iptr)
-  ASSERT_SIZE(queue, 2)
-
-  iptr = malloc(sizeof(int));
-  *iptr = 3;
-  ASSERT_SUCCESS_PUSH(queue, iptr)
-  ASSERT_SIZE(queue, 3);
-
-  iptr = malloc(sizeof(int));
-  *iptr = 4;
-  ASSERT_SUCCESS_PUSH(queue, iptr)
-  ASSERT_SIZE(queue, 4);
-
-  iptr = malloc(sizeof(int));
-  *iptr = 5;
-  ASSERT_FAILURE_PUSH(queue, iptr)
-  ASSERT_SIZE(queue, 4);
-  free(iptr);
-
-  ASSERT_SUCCESS_POP(queue, (void **)&iptr);
-  ASSERT_SIZE(queue, 3);
-  ASSERT_VALUE(iptr, 1);
-
-  *iptr = 5;
-  ASSERT_SUCCESS_PUSH(queue, iptr)
-  ASSERT_SIZE(queue, 4);
-
-  ASSERT_SUCCESS_POP(queue, (void **)&iptr);
-  ASSERT_SIZE(queue, 3);
-  ASSERT_VALUE(iptr, 2);
-  free(iptr);
-
-  ASSERT_SUCCESS_POP(queue, (void **)&iptr);
+  int i2 = 2;
+  ASSERT_SUCCESS_PUSH(queue, &i2);
   ASSERT_SIZE(queue, 2);
-  ASSERT_VALUE(iptr, 3);
-  free(iptr);
 
-  ASSERT_SUCCESS_POP(queue, (void **)&iptr);
+  int i3 = 3;
+  ASSERT_SUCCESS_PUSH(queue, &i3);
+  ASSERT_SIZE(queue, 3);
+
+  int i4 = 4;
+  ASSERT_SUCCESS_PUSH(queue, &i4)
+  ASSERT_SIZE(queue, 4);
+
+  int i5 = 5;
+  ASSERT_FAILURE_PUSH(queue, &i5)
+  ASSERT_SIZE(queue, 4);
+
+  int *ptr;
+  ASSERT_SUCCESS_POP(queue, (void **)&ptr);
+  ASSERT_SIZE(queue, 3);
+  ASSERT_VALUE(ptr, 1);
+
+  ASSERT_SUCCESS_PUSH(queue, &i5)
+  ASSERT_SIZE(queue, 4);
+
+  ASSERT_SUCCESS_POP(queue, (void **)&ptr);
+  ASSERT_SIZE(queue, 3);
+  ASSERT_VALUE(ptr, 2);
+
+  ASSERT_SUCCESS_POP(queue, (void **)&ptr);
+  ASSERT_SIZE(queue, 2);
+  ASSERT_VALUE(ptr, 3);
+
+  ASSERT_SUCCESS_POP(queue, (void **)&ptr);
   ASSERT_SIZE(queue, 1);
-  ASSERT_VALUE(iptr, 4);
-  free(iptr);
+  ASSERT_VALUE(ptr, 4);
 
-  ASSERT_SUCCESS_POP(queue, (void **)&iptr);
+  ASSERT_SUCCESS_POP(queue, (void **)&ptr);
   ASSERT_SIZE(queue, 0);
-  ASSERT_VALUE(iptr, 5);
-  free(iptr);
+  ASSERT_VALUE(ptr, 5);
 
-  ASSERT_FAILURE_POP(queue, (void **)&iptr);
+  ASSERT_FAILURE_POP(queue, (void **)&ptr);
   ASSERT_SIZE(queue, 0);
 }
 
 int main() {
   printf("Running tests.\n");
-  queue_t *queue = init_queue(4);
-  test_queue(queue);
-  while (queue_size(queue) != 0) {
-    int *ptr;
-    queue_pop(queue, (void **)&ptr);
-    free(ptr);
-  }
-  delete_queue(queue);
+  queue_t queue;
+  init_queue(&queue, 4);
+  test_queue(&queue);
+  free_queue(&queue);
   printf("Test succeeded.\n");
 }

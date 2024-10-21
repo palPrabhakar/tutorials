@@ -12,10 +12,10 @@ typedef struct queue {
 } queue_t;
 
 // size_t: max_elements
-queue_t *init_queue(size_t);
+void init_queue(queue_t *, size_t);
 
 // queue_t: valid queue ptr
-void delete_queue(queue_t *);
+void free_queue(queue_t *);
 
 // void *: data
 // success: return 0
