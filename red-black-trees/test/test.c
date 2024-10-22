@@ -11,7 +11,7 @@ FILE *tmp;
   init_node(&n##x, &i##x);                                                     \
   rb_insert(t, &n##x);                                                         \
   fseek(tmp, 0, SEEK_SET);                                                     \
-  traverse_tree(t, print);                                                     \
+  traverse_tree_bfs(t, print);                                                     \
   {                                                                            \
     char buffer[2 * t->size];                                                  \
     fseek(tmp, 0, SEEK_SET);                                                   \
@@ -46,9 +46,9 @@ void test_insertion(tree_t *tree) {
 
   T_INSERT(1, tree, "0b1r");
 
-  T_INSERT(2, tree, "0r1b2r");
+  T_INSERT(2, tree, "1b0r2r");
 
-  T_INSERT(3, tree, "0b1b2b3r");
+  T_INSERT(3, tree, "1b0b2b3r");
 }
 
 int main() {

@@ -32,12 +32,13 @@ void init_node(node_t *, void *);
 // returns: a red-black-tree
 void init_tree(tree_t *, comparator);
 
-// a helper method to do inorder traversal
+// a helper method to do inorder and level-order traversal
 // tree_t *: valid tree pointer
 // void (*)(node_t *): callback to run on each node
 // ex usage: delete heap allocated nodes
-typedef void (*call_back)(node_t*);
-void traverse_tree(tree_t *, call_back);
+typedef void (*call_back)(node_t *);
+void traverse_tree_dfs(tree_t *, call_back);
+void traverse_tree_bfs(tree_t *, call_back);
 
 // tree_t *: valid tree pointer
 //    - use init_tree to create a valid tree_t*
@@ -63,16 +64,6 @@ int rb_remove_key(tree_t *, void *, node_t **);
 // node_t *: a node which exist in the tree
 // rb_delete will not fail if above conditions are met
 void rb_delete(tree_t *, node_t *);
-
-// FILE *: write to file
-// to_string: function to convert data to char *
-//    -char *: buffer
-//    -void *: data
-// size_t: buffer_size
-// buffer_size should be large enough to
-// hold char * converted data
-typedef void (*to_string)(char *, void *);
-void rb_print_tree(tree_t *, FILE *, to_string, size_t);
 
 // tree_t *: a valid tree pointer
 // returns:

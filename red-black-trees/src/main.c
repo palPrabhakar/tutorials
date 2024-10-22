@@ -60,10 +60,10 @@ int main(void) {
     node_t *node;
     rb_remove_key(&tree, &i0, &node);
 
-    traverse_tree(&tree, print);
+    traverse_tree_bfs(&tree, print);
   }
 
-  printf("\n\n");
+  printf("-----------\n");
 
   {
     // heap example
@@ -82,9 +82,9 @@ int main(void) {
     CREATE_NODE(3)
     rb_insert(tree, n3);
 
-    rb_print_tree(tree, stdout, convert, 8);
+    traverse_tree_dfs(tree, print);
 
-    traverse_tree(tree, delete);
+    traverse_tree_dfs(tree, delete);
     free(tree);
   }
 

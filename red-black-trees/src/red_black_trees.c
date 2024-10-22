@@ -44,8 +44,37 @@ static void traverse_tree_impl(node_t *node, call_back cb) {
   }
 }
 
-void traverse_tree(tree_t *tree, call_back cb) {
+void traverse_tree_dfs(tree_t *tree, call_back cb) {
   traverse_tree_impl(tree->root, cb);
+}
+
+void traverse_tree_bfs(tree_t *tree, call_back cb) {
+  if (tree->root != &nil) {
+    queue_t queue;
+    init_queue(&queue, tree->size);
+
+    queue_push(&queue, tree->root);
+
+    while (queue_size(&queue) != 0) {
+      node_t *node;
+      CHECK_QUEUE(queue_pop(&queue, (void **)&node),
+                  "Error: queue_pop() failed at %d.\n", __LINE__)
+
+      if (node->left != &nil) {
+        CHECK_QUEUE(queue_push(&queue, node->left),
+                    "Error: queue_push() failed at %d.\n", __LINE__);
+      }
+
+      if (node->right != &nil) {
+        CHECK_QUEUE(queue_push(&queue, node->right),
+                    "Error: queue_push() failed at %d.\n", __LINE__);
+      }
+
+      cb(node);
+    }
+
+    free_queue(&queue);
+  }
 }
 
 void init_node(node_t *node, void *data) {
@@ -316,58 +345,4 @@ static void rb_delete_fixup(tree_t *tree, node_t *node) {
   }
 
   node->color = black;
-}
-
-static const char *node_color(color_t color) {
-  switch (color) {
-  case red:
-    return "red";
-  case black:
-    return "black";
-  default:
-    return "";
-  }
-}
-
-void rb_print_tree(tree_t *tree, FILE *f, to_string to_str, size_t buf_size) {
-  fprintf(f, "digraph RedBlackTree {\n");
-  fprintf(f, "node [shape=circle style=filled];\n");
-
-  char node_buffer[buf_size];
-  char child_buffer[buf_size];
-
-  if (tree->root != &nil) {
-
-    queue_t queue;
-    init_queue(&queue, tree->size);
-
-    queue_push(&queue, tree->root);
-
-    while (queue_size(&queue) != 0) {
-      node_t *node;
-      CHECK_QUEUE(queue_pop(&queue, (void **)&node),
-                  "Error: queue_pop() failed at %d.\n", __LINE__)
-      to_str(node_buffer, node->data);
-      fprintf(f, "%s [fillcolor=%s fontcolor=white];\n", node_buffer,
-              node_color(node->color));
-
-      if (node->left != &nil) {
-        to_str(child_buffer, node->left->data);
-        fprintf(f, "%s -> %s;\n", node_buffer, child_buffer);
-        CHECK_QUEUE(queue_push(&queue, node->left),
-                    "Error: queue_push() failed at %d.\n", __LINE__);
-      }
-
-      if (node->right != &nil) {
-        to_str(child_buffer, node->right->data);
-        fprintf(f, "%s -> %s;\n", node_buffer, child_buffer);
-        CHECK_QUEUE(queue_push(&queue, node->right),
-                    "Error: queue_push() failed at %d.\n", __LINE__);
-      }
-    }
-
-    free_queue(&queue);
-  }
-
-  fprintf(f, "}\n");
 }
