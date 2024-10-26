@@ -277,6 +277,8 @@ void rb_delete(tree_t *tree, node_t *node) {
   if (tmp_color == black) {
     rb_delete_fixup(tree, tmp_succ);
   }
+
+  tree->size--;
 }
 
 static void rb_delete_fixup(tree_t *tree, node_t *node) {

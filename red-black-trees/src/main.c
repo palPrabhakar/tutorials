@@ -82,6 +82,12 @@ int main(void) {
     CREATE_NODE(3)
     rb_insert(tree, n3);
 
+    int i = 2;
+    node_t *node;
+    rb_remove_key(tree, &i, &node);
+    free(node->data);
+    free(node);
+
     traverse_tree_dfs(tree, print);
 
     traverse_tree_dfs(tree, delete);
