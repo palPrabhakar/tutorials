@@ -12,6 +12,12 @@
 *.map
 *.exp
 
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
 # Precompiled Headers
 *.gch
 *.pch
@@ -28,10 +34,27 @@
 *.so.*
 *.dylib
 
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+>>>>>>> vulkan/main
+
 # Executables
 *.exe
 *.out
 *.app
+<<<<<<< HEAD
 *.i*86
 *.x86_64
 *.hex
