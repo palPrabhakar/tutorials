@@ -36,7 +36,7 @@ def main():
     args = parser.parse_args()
     n = args.n
     if n == 0:
-        print("n > 0")
+        print("required: n > 0")
         exit()
     network = gen_network(n)
     arr = np.random.rand(n)
