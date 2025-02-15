@@ -20,6 +20,6 @@
 | Delete entire line and change to insert mode | S or ^c |
 | Go to the end of line and change to insert mode | A or $a |
 | Go to start of line and change to insert mode | I or ^i |
-
-
-
+| Delete a word irrespective of cursor position | daw |
+| Increment a number | \<C-a\> or n\<C-a\> |
+| Decrement a number | \<C-x\> or n\<C-x\> |
