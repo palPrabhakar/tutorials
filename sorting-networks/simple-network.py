@@ -8,6 +8,43 @@ def comparator(arr, i, j):
         arr[i], arr[j] = arr[j], arr[i]
 
 
+def sorting_network_9():
+    network = []
+    network.append(partial(comparator, i=0, j=1))
+    network.append(partial(comparator, i=3, j=4))
+    network.append(partial(comparator, i=6, j=7))
+    network.append(partial(comparator, i=1, j=2))
+    network.append(partial(comparator, i=4, j=5))
+    network.append(partial(comparator, i=7, j=8))
+    network.append(partial(comparator, i=0, j=1))
+    network.append(partial(comparator, i=3, j=4))
+    network.append(partial(comparator, i=6, j=7))
+    network.append(partial(comparator, i=0, j=3))
+    network.append(partial(comparator, i=3, j=6))
+    network.append(partial(comparator, i=0, j=3))
+    network.append(partial(comparator, i=1, j=4))
+    network.append(partial(comparator, i=4, j=7))
+    network.append(partial(comparator, i=1, j=4))
+    network.append(partial(comparator, i=2, j=5))
+    network.append(partial(comparator, i=5, j=8))
+    network.append(partial(comparator, i=2, j=5))
+    network.append(partial(comparator, i=1, j=3))
+    network.append(partial(comparator, i=5, j=7))
+    network.append(partial(comparator, i=2, j=6))
+    network.append(partial(comparator, i=4, j=6))
+    network.append(partial(comparator, i=2, j=4))
+    network.append(partial(comparator, i=2, j=3))
+    network.append(partial(comparator, i=5, j=6))
+    return network
+
+
+def get_optimal_network(n):
+    if n == 9:
+        return sorting_network_9()
+    else:
+        exit(1)
+
+
 def gen_network(n):
     if n == 1:
         return []
@@ -38,7 +75,11 @@ def main():
     if n == 0:
         print("required: n > 0")
         exit()
-    network = gen_network(n)
+
+    if n == 9:
+        network = get_optimal_network(n)
+    else:
+        network = gen_network(n)
     arr = np.random.rand(n)
     test(arr, network)
 
