@@ -10,6 +10,10 @@
 | Perform substitution | :s/pattern/replacement | & | u |
 | Execute a sequence of change | qx{changes}q | @x | u |
 
+## Actions
+
+action = operator + motion
+
 ## Helpful Actions - Normal Mode
 
 | Description | Action |
@@ -46,9 +50,23 @@ The first three commands can also be used in vim's command line and bash shell
 
 Expression register can be used to evaluate a piece of vim script code. Vim inserts the results from the expression register at the current cursor position.
 
+## Visual Mode
+
+| Effect | Command |
+|--------|---------|
+| Enable char-wise visual mode | v |
+| Enable line-wise visual mode | V |
+| Enable block-wise visual mode | \<C-v\>  |
+| Reselect the last visual selection | gv |
+| Toggle the free end | o |
+
 ### Replace Mode
 
 Replace mode is identical to insert mode, except that it overwrites the existing text in the document. Press 'R' to engage replace mode.
+
+## Select Mode
+
+Select mode is similar to visual mode, however, the selected text is deleted when we type any printable character. Press '\<C-g\>' to toggle between visual mode and select mode.
 
 ## Notes
 
