@@ -35,18 +35,18 @@ action = operator + motion
 
 ## Helpful Actions - Insert Mode
 
-| Description | Action |
-|-------------|--------|
-| Delete back one char | \<C-h\> |
-| Delete back one word | \<C-w\> |
-| Delete back to start of line | \<C-u\> |
-| Switch to Insert Normal mode | \<C-o\> |
-| Paste just yanked text at cursor position | \<C-r\>0 |
-| Paste text from register at cursor position | \<C-r\>{register} |
-| Access expression register | \<C-r\>= |
-| Insert a char by its numeric code | \<C-v\>{code} or  \<C-v\>u{hexcode}|
+| Description | Action | Cmd Mode |
+|-------------|--------|---------|
+| Delete back one char | \<C-h\> | Y |
+| Delete back one word | \<C-w\> | Y |
+| Delete back to start of line | \<C-u\> | Y |
+| Switch to Insert Normal mode | \<C-o\> | N |
+| Paste just yanked text at cursor position | \<C-r\>0 | Y |
+| Paste text from register at cursor position | \<C-r\>{register} | Y |
+| Access expression register | \<C-r\>= | N |
+| Insert a char by its numeric code | \<C-v\>{code} or  \<C-v\>u{hexcode}| Y |
 
-The first three commands can also be used in vim's command line and bash shell
+The first three commands can also be used in bash shell. The command which can also be used in cmd mode are marked 'Y'.
 
 Expression register can be used to evaluate a piece of vim script code. Vim inserts the results from the expression register at the current cursor position.
 
@@ -59,6 +59,55 @@ Expression register can be used to evaluate a piece of vim script code. Vim inse
 | Enable block-wise visual mode | \<C-v\>  |
 | Reselect the last visual selection | gv |
 | Toggle the free end | o |
+
+## Command-Line Mode
+
+Command line modes prompts us to enter an Ex command, a search pattern, or an expression. Command mode can be enabled by pressing ':' key. Pressing '/' brings up the search prompt and expression register can be accessed using \<C-r\>=.
+
+| Effect | Command |
+|--------|---------|
+| Delete specified lines [into register x] | :[range]delete [x] |
+| Yank specified lines [into register x] | :[range]yank [x] |
+| Put the text form register x after the specified line | :[range]put [x] |
+| Copy the specified lines to below the line specified by {address} | :[range]copy {address} |
+| Move the specified lines to below the line specified by {address} | :[range]move {address} |
+| Join the specified lines | :[range]join |
+| Execute Normal mode {commands} on each specified line | :[range]normal {commands} |
+| Replace occurrences of {pattern} with {string} on each specified line | :[range]substitute/{pattern}/{string}/[flags] |
+| Execute the Ex command [cmd] on all specified lines where the {pattern} matches | :[range]global/{pattern}/[cmd] |
+
+Vim has an Ex command for just about everything (see `:h ex-cmd-index`). The start and end of a range (`:{start},{end}`) can be specified using a line number, mark, or a pattern.
+
+#### Specify a range by pattern
+
+```
+:/{pattern}/,/{pattern}/[cmd]
+```
+
+#### Modify an address using an offset
+
+```
+:{address}+n
+```
+
+#### Repeat last Ex command
+
+To repeat a Ex command first time use `@:`. Afterwards, use `@@` to subsequently repeat it.
+
+#### Miscellaneous
+
+The !{motion} operator command drops us into Command-Line mode and prepopulates the [range] with the lines covered by the specified {motion}
+
+### Command-Line Window
+
+| Action | Command |
+|--------|---------|
+| Open the command-line window with history of searches | q/ |
+| Open the command-line window with history of Ex commands | q: |
+| Switch from command-line mode to command-line window | \<C-f\> |
+
+
+Press `q:` to bring up the command-line window.
 
 ### Replace Mode
 
