@@ -16,7 +16,7 @@ void dump_output(double* grid, size_t xsz, size_t ysz) {
       fp<<"\n";
     }
     fp.close();
-  } 
+  }
 }
 
 void explicit_euler(double* &grid, double* &ogrid, double  grid_fo, size_t xsz, size_t ysz) {
@@ -86,7 +86,7 @@ int main() {
   }
 
   dump_output(grid, xsz, ysz);
- 
+
   delete[] grid;
   delete[] ogrid;
 

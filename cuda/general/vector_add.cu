@@ -11,7 +11,7 @@ __global__ void vectorAdd(int* a, int* b, int* c, int n) {
 
 int main() {
   int n = 1 << 20;
-  
+
   // Host array
   /* std::vector<int> h_a(n, 2) */
   /* std::vector<int> h_b(n, 3); */
@@ -46,7 +46,7 @@ int main() {
 
   cudaMemcpy(d_a, h_a, bytes, cudaMemcpyHostToDevice);
   cudaMemcpy(d_b, h_b, bytes, cudaMemcpyHostToDevice);
-  
+
   std::cout<<"Mem copy successfull\n";
 
   vectorAdd<<<grid_size, block_size>>>(d_a, d_b, d_c, n);
@@ -56,7 +56,6 @@ int main() {
   for(int i = 0; i < n; ++i) {
     if(h_c[i] != 5) {
       std::cout<<h_c[i]<<" "<<i<<std::endl;
-      std::cout<<"Fucking wrong answer\n";
       break;
     }
   }
