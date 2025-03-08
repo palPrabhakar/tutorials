@@ -109,7 +109,66 @@ The !{motion} operator command drops us into Command-Line mode and prepopulates 
 
 Press `q:` to bring up the command-line window.
 
-### Replace Mode
+## Files
+
+Buffers - In memory representation of a file in Vim is called a buffer.
+
+| Action | Command |
+|--------|---------|
+| Write the contents of a buffer to a file | :w[rite] |
+| Write the contents of a buffer to a file only if modified | :up[date] |
+| Save the current buffer under the name and update buffer name | :sav[eas] {file} |
+| Goto next buffer | :bn[ext] |
+| Goto prev buffer | :bp[rev] |
+| Show all buffers | :ls or :buffers |
+| Execute an Ex command on all the buffers listed by :ls | :bufdo |
+| Delete buffers | :bd[elete] N1 N2 ... or :N,M bd[elete] |
+
+### Argument List
+
+An arguments list is easily managed and can be useful for grouping together a collection of files for easy navigation.
+
+| Action | Command |
+|--------|---------|
+| List the contents of an arg list | :args |
+| Update the arguments in arg list | :args {arguments} |
+| Execute an Ex command on all items in the arg list | :argdo |
+| Goto next element in the arglist | :n[ext] |
+| Goto next element in the arglist | :p[rev] |
+
+Examples:
+
+1. Populate argument list from shell cmd - ``:args `cat {file}` ``
+2. Populate arguments list using globs -  `:args **/*.c`
+
+### Split Windows
+
+| Action | Command |
+|--------|---------|
+| Split the window horizontally | \<C-w\>s or :split |
+| Split the window vertically | \<C-w\>v or :vsplit |
+| Cycle between open windows | \<C-w\>w or \<C-w\>\<C-w\> |
+| Focus the window to the left | \<C-w\>h |
+| Focus the window to the right | \<C-w\>l |
+| Focus the window to the above | \<C-w\>j |
+| Focus the window to the below | \<C-w\>k |
+| Close the active window | \<C-w\>c or :cl[ose] |
+| Keep the active window, close all | \<C-w\>o or :on[ly] |
+
+### Tabs
+
+Tabs can be used to organize the split windows into a collection of workspaces.
+
+| Action | Command |
+|--------|---------|
+| Open {filename} in a new tab | :tabe[dit] {filename} |
+| Move the current windows into its own tab | \<C-w\>T |
+| Close the current tab and all its windows | :tabc[lose] |
+| Keep the active tab page, closing all others | :tabo[nly] |
+| Goto next tab | :tabn[ext] or gt |
+| Goto prev tab | :tabp[rev] or gT |
+
+## Replace Mode
 
 Replace mode is identical to insert mode, except that it overwrites the existing text in the document. Press 'R' to engage replace mode.
 
