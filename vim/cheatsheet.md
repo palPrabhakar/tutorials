@@ -123,6 +123,7 @@ Buffers - In memory representation of a file in Vim is called a buffer.
 | Show all buffers | :ls or :buffers |
 | Execute an Ex command on all the buffers listed by :ls | :bufdo |
 | Delete buffers | :bd[elete] N1 N2 ... or :N,M bd[elete] |
+| Open a file relative to active file directory | :e[dit] %:h{filename} |
 
 ### Argument List
 
@@ -167,6 +168,21 @@ Tabs can be used to organize the split windows into a collection of workspaces.
 | Keep the active tab page, closing all others | :tabo[nly] |
 | Goto next tab | :tabn[ext] or gt |
 | Goto prev tab | :tabp[rev] or gT |
+
+### Find Command
+
+The `:find` command allows us to open a file by its name without having to provide a fully qualified path. To use the find command we first need to set the path.
+
+The command `:path+=<dir>/**` will set the path such that vim will search all directories under `<dir>` when using find command.
+
+### Netrw
+
+| Action | Command |
+|--------|---------|
+| Open file explorer for current working directory | :e[dit] . |
+| Open file explorer for the directory of the active buffer | :E[xplore] |
+| Open file explorer for the directory of the active buffer in horizontal split | :Sexplore |
+| Open file explorer for the directory of the active buffer in vertical split | :Vexplore |
 
 ## Replace Mode
 
