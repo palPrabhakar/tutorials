@@ -237,7 +237,33 @@ Vim’s text objects fall into two categories: those that interact with pairs of
 
 Vim’s marks allow us to jump quickly to locations of interest within a document. We can set marks manually, but Vim also keeps track of certain points of interest for us automatically.
 
-The `m{a-zA-Z}` command marks the current cursor location with the designated letter. Lowercase marks are local to each individual buffer, whereas uppercase marks are globally accessible. Vim provides two Normal mode commands for jumping to a mark. `’{mark}` moves to the line where a mark was set, positioning the cursor on the first non-whitespace character. The ``{mark}` command moves the cursor to the exact position where a mark was set, restoring the line and the column at once.
+The `m{a-zA-Z}` command marks the current cursor location with the designated letter. Lowercase marks are local to each individual buffer, whereas uppercase marks are globally accessible. Vim provides two Normal mode commands for jumping to a mark. `’{mark}` moves to the line where a mark was set, positioning the cursor on the first non-whitespace character. The ```{mark}`` command moves the cursor to the exact position where a mark was set, restoring the line and the column at once.
+
+## Jumps
+
+Jumps are similar to motions, except that they can also move us between different files.
+
+### Jump List
+
+Any command that changes the active file for the current window can be described as a jump. In the jump list, Vim records the cursor location before and after running such a command.
+
+The `<C-o>` command is like the back button, while the complementary `<C-i>` command is like the forward button. These commands allow us to traverse Vim’s jump list. We can inspect the contents of the jump list by running this command: `:jumps`.
+
+| Description | Command |
+|--------|---------|
+| Jump to line number | [count]G |
+| Jump to next/previous occurrence of pattern | //pattern<CR>/?pattern<CR>/n/N |
+| Jump to matching parenthesis | % |
+| Jump to start of previous/next sentence | (/) |
+| Jump to start of previous/next paragraph | {/} |
+| Jump to top/middle/bottom of screen | H/M/L |
+| Jump to file name under the cursor | gf |
+| Jump to definition of keyword under the cursor | <C-]> |
+| Jump to a mark | ``'{mark}/`{mark}``|
+
+### Change List
+
+Vim records the location of our cursor after each change we make to a document. We can inspect the contents of the change list by running the command: `:changes`. Using the `g;` and `g,` commands, we can traverse backward and forward through the change list. If we leave Insert mode and then scroll around the document, we can quickly carry on where we left off by pressing `gi`.
 
 ## Replace Mode
 
