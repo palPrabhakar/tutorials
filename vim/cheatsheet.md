@@ -184,6 +184,61 @@ The command `:path+=<dir>/**` will set the path such that vim will search all di
 | Open file explorer for the directory of the active buffer in horizontal split | :Sexplore |
 | Open file explorer for the directory of the active buffer in vertical split | :Vexplore |
 
+## Getting Around Faster
+
+### Vim Motions
+
+Motions are not just for navigation around a document. They can also be used in operator-pending mode perform real work.
+
+| Description | Command |
+|--------|---------|
+| Move up and down real lines | j/k |
+| Move up and down display lines | gj/gk |
+| To the first character of real line | 0 |
+| To the first character of display line | g0 |
+| To the first non-blank character of real line | ^ |
+| To the first non-blank character of display line | g^ |
+| End of real line | $ |
+| End of display line | g$ |
+
+### words vs WORDS
+
+We can think of WORDS and bigger than words.
+
+| Description | Command (words) | Command (WORDS)
+|--------|---------|
+| Forward to start of next word | w | W |
+| Backward to start of current/previous word | b | B|
+| Forward to end of current/next word | e | E |
+| Backward to end of previous word | ge | gE |
+
+### Find by Character
+
+The `f{char}` command is one of the quickest methods of moving around in Vim. It searches for the specified character, starting with the cursor position and continuing to the end of the current line.
+
+| Description | Command |
+|--------|---------|
+| Forward to the next occurrence of {char} | f{char} |
+| Backward to the previous occurrence of {char} | F{char} |
+| Forward to the character before the next occurrence of {char} | t{char} |
+| Backward to the character after the previous occurrence of {char} | T{char} |
+| Repeat the last character-search command | ; |
+| Reverse the last character-search command | , |
+
+### Text Objects
+
+Text objects define regions of text by structure. With only a couple of keystrokes, we can use these to select or operate on a chunk of text. Vim’s text objects consist of two characters, the first of which is always either i or a. As a mnemonic, think of i as inside and a as around (or all).
+
+Remember this: whenever you see {motion} as part of the syntax for a command, you can also use a text object.
+
+Vim’s text objects fall into two categories: those that interact with pairs of delimiters, such as `i)` , `i"` , and `it` , and those that interact with chunks of text, such as words `iw or iW`, sentences as `is` , and paragraphs `ap`.
+
+### Vim Marks
+
+Vim’s marks allow us to jump quickly to locations of interest within a document. We can set marks manually, but Vim also keeps track of certain points of interest for us automatically.
+
+The `m{a-zA-Z}` command marks the current cursor location with the designated letter. Lowercase marks are local to each individual buffer, whereas uppercase marks are globally accessible. Vim provides two Normal mode commands for jumping to a mark. `’{mark}` moves to the line where a mark was set, positioning the cursor on the first non-whitespace character. The ``{mark}` command moves the cursor to the exact position where a mark was set, restoring the line and the column at once.
+
 ## Replace Mode
 
 Replace mode is identical to insert mode, except that it overwrites the existing text in the document. Press 'R' to engage replace mode.
