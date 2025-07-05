@@ -205,8 +205,8 @@ Motions are not just for navigation around a document. They can also be used in 
 
 We can think of WORDS and bigger than words.
 
-| Description | Command (words) | Command (WORDS)
-|--------|---------|
+| Description | Command (words) | Command (WORDS) |
+|--------|---------|---------|
 | Forward to start of next word | w | W |
 | Backward to start of current/previous word | b | B|
 | Forward to end of current/next word | e | E |
@@ -264,6 +264,42 @@ The `<C-o>` command is like the back button, while the complementary `<C-i>` com
 ### Change List
 
 Vim records the location of our cursor after each change we make to a document. We can inspect the contents of the change list by running the command: `:changes`. Using the `g;` and `g,` commands, we can traverse backward and forward through the change list. If we leave Insert mode and then scroll around the document, we can quickly carry on where we left off by pressing `gi`.
+
+## Registers
+
+Vim’s registers are simply containers that hold text. They can be used in the manner of a clipboard for cutting, copying, and pasting text, or they can be used to record a macro by saving a sequence of keystrokes.
+
+### Copy and Paste
+
+Instead of dealing with a single system-wide clipboard, Vim provides a couple of dozen registers where we can store regions of text. We can specify which register we want to use by prefixing the command with `"{register}`.
+
+In addition to the Normal mode commands, Vim also provides Ex commands for delete, yank, and put operations. We could cut the current line into register c by running `:delete c`, and then we could paste it below the current line with the `:put c` command.
+
+Vim also provides `gp` and `gP` commands. These also put the text before or after the current line, but they leave the cursor positioned at the end of the pasted text instead of at the beginning.
+
+### Unnamed Register ("")
+
+The `x` , `s` , `d{motion}` , `c{motion}` , and `y{motion}` commands (and their uppercase equivalents) all set the contents of the unnamed register.
+
+### Yank Register ("0)
+
+When we use the y{motion} command, the specified text is copied not only into the unnamed register but also into the yank register, which is addressed by the 0 symbol.
+
+### Named Registers ("a-"z)
+
+Vim has one named register for each letter of the alphabet.
+
+### Blackhole Register ("_)
+
+The black hole register is a place from which nothing returns. It’s addressed by the underscore symbol.
+
+### System Clipboard ("+) and Selection ("*) Registers
+
+If we prefix Vim’s yank or delete commands with `"+`, the specified text will be captured in the system clipboard. The X11 windowing system has a second kind of clipboard called the primary. This represents the most recently selected text. Vim’s quotestar register maps to the primary clipboard and is addressed by the `*` symbol.
+
+### Expression Register ("=)
+
+Vim’s registers can be thought of simply as containers that hold a block of text. The expression register, referenced by the `=` symbol, is an exception.
 
 ## Replace Mode
 
